@@ -86,6 +86,19 @@ for t in tracks_p2:
 
 intersection_count = (M2 > 1).sum()
 
-print("part 1: %i"%intersection_count)
+print("part 2: %i"%intersection_count)
 #
+
+if True:
+    import cmocean
+    from matplotlib import pyplot
+    
+    pyplot.style.use('dark_background')
+    
+    fig,ax = pyplot.subplots(1,1, figsize=(8,8), constrained_layout=True)
+    ax.pcolor(M2, cmap=cmocean.cm.thermal, vmin=0, vmax=2)
+    
+    fig.show()
+    fig.savefig('thermal_vents.png')
+    
 
