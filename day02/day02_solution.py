@@ -9,6 +9,7 @@ class Solver:
             self.lines = f.readlines()
         self.x = 0
         self.y = 0
+        self.aim = 0
         self.map = {'forward': self.forward,
                     'up': self.up,
                     'down': self.down
@@ -17,10 +18,11 @@ class Solver:
     
     def forward(self,mag):
         self.x += int(mag)
+        self.y += self.aim*int(mag)
     def up(self,mag):
-        self.y -= int(mag)
+        self.aim -= int(mag)
     def down(self,mag):
-        self.y += int(mag)
+        self.aim += int(mag)
     
     def parse_one(self,line):
         dir,mag = line.split(' ')
@@ -39,3 +41,5 @@ if __name__=="__main__":
     solver.parse_all()
     solver.broadcast_position()
     solver.coordinate_product()
+    
+    
