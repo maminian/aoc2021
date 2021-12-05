@@ -39,7 +39,7 @@ class Solver:
     
     def solve(self):
         self.get_epsilon_strb()
-        print(self.gamma_rate * self.epsilon_rate)
+        return self.gamma_rate * self.epsilon_rate
         
     def strb_to_integer(self,val):
         '''
@@ -52,8 +52,73 @@ class Solver:
             s += 2**(len(val)-i-1)*int(v)
         return s
     
-    
-    
+    def filter_raw(self):
+        '''
+        Working off of the gamma and epsilon values, 
+        search bit by bit and filter out based on majority/minority 
+        in the current list of entries by position, until a single 
+        entry remains.
+        
+        Low tech version right now; todo (i.e. will never do)
+        implement version that works based on operator.gt or operator.lt 
+        input to switch between cases.
+        
+        Oxygen rating : ties for majority value go to '1'
+        CO2 rating : ties for minority value go to '0'
+        '''
+        # oxygen
+        mask = range(self.height)
+        for p in range(self.width):
+            counts = {'0':0,'1':0}
+            keeps = []
+            for m in mask:
+                counts[self.lines[m][p]] += 1
+            if counts['0'] > counts['1']:
+                filter_bit = '0'
+            else:
+                filter_bit = '1'
+
+            keeps = [m for m in mask if self.lines[m][p]==filter_bit]
+            mask = list(keeps)
+            if len(mask)==1:
+                o2_result = mask[0]
+                break
+
+        # carbon dioxide
+        mask = range(self.height)
+        for p in range(self.width):
+            counts = {'0':0,'1':0}
+            keeps = []
+            for m in mask:
+                counts[self.lines[m][p]] += 1
+            if counts['0'] > counts['1']:
+                filter_bit = '1'
+            else:
+                filter_bit = '0'
+
+            keeps = [m for m in mask if self.lines[m][p]==filter_bit]
+            mask = list(keeps)
+            if len(mask)==1:
+                co2_result = mask[0]
+                break
+
+        return (self.lines[o2_result], self.lines[co2_result])
+        
+    def filter(self):
+        o,c = self.filter_raw()
+        self.o2_filter_strb = o
+        self.co2_filter_strb = c
+        
+        self.o2_filter = self.strb_to_integer( self.o2_filter_strb )
+        self.co2_filter = self.strb_to_integer( self.co2_filter_strb )
+        
+        return self.o2_filter * self.co2_filter
+#
+
+
 if __name__=="__main__":
     solver = Solver()
-    solver.solve()
+    p1 = solver.solve()
+    print('part 1: %i'%p1)
+    p2 = solver.filter()
+    print('part 2: %i'%p2)
