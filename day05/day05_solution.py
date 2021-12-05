@@ -23,7 +23,8 @@ def get_track(vent):
 #    import pdb
 #    pdb.set_trace()
     dv = vent[1] - vent[0]
-    dv = np.array( dv/np.linalg.norm(dv), dtype=int )
+    divvy = np.array( [1 if dvi==0 else abs(dvi) for dvi in dv] )
+    dv = np.array( dv/divvy, dtype=int )
     
     pos = np.array( vent[0] )
     coll = [np.array(pos)]
@@ -56,8 +57,6 @@ def test_intersection(t1,t2):
 
 vents = [get_vent(l) for l in lines]
 
-
-
 # only consider horizontal/vertical lines for now.
 vents_p1 = [v for v in vents if (v[0][0]==v[1][0] or v[0][1]==v[1][1]) ]
 
@@ -71,6 +70,22 @@ for t in tracks_p1:
 
 intersection_count = (M1 > 1).sum()
 
+print("part 1: %i"%intersection_count)
 #
 
+# part 2... just an adjustment needed in scaling the dv; 
+# and now not filtering the vents before processing.
+
+tracks_p2 = [get_track(v) for v in vents]
+tracks_p2 = np.concatenate( tracks_p2 )
+
+M2 = np.zeros(tracks_p2.max(axis=0)+1)
+
+for t in tracks_p2:
+    M2[tuple(t)] += 1
+
+intersection_count = (M2 > 1).sum()
+
+print("part 1: %i"%intersection_count)
+#
 
