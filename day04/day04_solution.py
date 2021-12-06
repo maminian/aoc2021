@@ -25,7 +25,6 @@ class BingoCard:
             print('')
         if max( self.mask.sum(axis=0) )==5 or max( self.mask.sum(axis=1) )==5:
             print("Bingo, card %i"%self.idx)
-            print(self.mask)
             print("Score: %i"%self.calculate_score())
             return True
         else:
@@ -74,10 +73,24 @@ class BingoGame:
         winners = [False]
         while not any(winners):
             winners = self.next(verbose=verbose)
+    def run_until_all_bingo(self, verbose=False):
+        self.winners = [False for _ in self.cards]
+        while sum(self.winners)<99:
+            self.winners = self.next(verbose=verbose)
+        for j,w in enumerate(self.winners):
+            if not w:
+                card = self.cards[j]
+                break
+        while sum(self.winners)<100:
+            self.winners = self.next(verbose=verbose)
+        print("Last card to win: %i" % j)
+        print("Last card's score: %i" % card.calculate_score())
+        
     def get_status(self):
         return np.array([c.longest_streak() for c in self.cards], dtype=int)
 
 if __name__=="__main__":
     game = BingoGame()
     game.run_until_bingo()
-    #game.next(verbose=True)
+    game.run_until_all_bingo()
+
