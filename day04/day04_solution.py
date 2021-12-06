@@ -4,6 +4,15 @@ import numpy as np
 # line 0 indicates the sequence of numbers called in bingo.
 
 class BingoCard:
+    '''
+    Class for a single bingo card. Remembers the card itself, and a boolean 
+    mask indicating whether numbers have been called or not. 
+    Does row-sums and col-sums on the mask to search for bingos, 
+    and can report True/False for every new number called.
+    
+    Also calculates its own "bingo score" (defined by the description of 
+    the problem) as well as a more intuitive max of max-rowsum and max-colsum.
+    '''
     def __init__(self,fivelines,idx=0):
         self.idx = idx
         self.card = np.zeros((5,5), dtype=int)
@@ -17,6 +26,14 @@ class BingoCard:
         self.last = -1  # most recent number called.
         
     def check(self,number, verbose=True):
+        '''
+        Inputs:
+            number : integer; a number called by the BingoGame.
+            verbose : boolean; optional; whether to print info to terminal.
+        Outputs:
+            Boolean True/False; whether this card reached bingo this round.
+            If verbose is True, it will also tell you its "bingo score".
+        '''
         self.last = number
         self.mask += (self.card == number)
         if verbose:
@@ -38,6 +55,10 @@ class BingoCard:
 #
 
 class BingoGame:
+    '''
+    Class loads the input, stores all bingo cards; serves them numbers; 
+    tracks the sequence of calls; gets them to report bingos and scores.
+    '''
     def __init__(self,fname='input'):
         with open('input', 'r') as f:
             lines = f.readlines()
@@ -64,16 +85,37 @@ class BingoGame:
         self.round = 0
     #
     def next(self, verbose=False):
+        '''
+        Inputs:
+            verbose : boolean; optional; whether to print stuff to terminal.
+        Outputs:
+            update : boolean array; whether each bingo card has won on the 
+                current round or not.
+        '''
         update = np.zeros(len(self.cards), dtype=bool)
         for j,c in enumerate( self.cards ):
             update[j] = c.check(self.seq[self.round], verbose=verbose)
         self.round += 1
         return update
+        
     def run_until_bingo(self, verbose=False):
+        '''
+        Repeatedly calls self.next() until the first bingo is achieved.
+        
+        Inputs:
+            verbose : boolean; optional; whether to print stuff to terminal.
+        '''
         winners = [False]
         while not any(winners):
             winners = self.next(verbose=verbose)
+        
     def run_until_all_bingo(self, verbose=False):
+        '''
+        Repeatedly calls self.next() until the **last** bingo is achieved.
+        Different from run_until_bingo(), as this also does the score 
+        processing for that final bingo winner.
+        
+        '''
         self.winners = [False for _ in self.cards]
         while sum(self.winners)<99:
             self.winners = self.next(verbose=verbose)
