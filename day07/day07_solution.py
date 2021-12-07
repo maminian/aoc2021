@@ -11,8 +11,8 @@ with open('input', 'r') as f:
 # speculate: the median of positions gives the optimal 
 # fuel position.
 # probably true because fuel cost is based on one-norm.
-# Presumably a "tie" situation means that n and n+1 have 
-# the same fuel cost.
+# Presumably a "tie" situation (median is between two integers) 
+# means that n and n+1 have the same fuel cost.
 
 optimal_location = np.median(positions)
 fuel_cost = sum( np.abs(positions - optimal_location) )
@@ -50,9 +50,12 @@ if av_mm != int(av_mm):
     print("Rounding down to int.")
     av_mm = int(av_mm)
 
+# some tinkering shows that averaging the argminimizers doesn't work.
+# But it's a continuous process, so I should be able to 
 # brute force check values between mean and median.
 candidates = np.arange(median_location,mean_location+1, dtype=int)
 vals = np.array([cost(positions, c) for c in candidates])
 
 for c,v in zip(candidates, vals):
     print("%10i | %10i"%(c,v))
+
