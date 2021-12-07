@@ -53,9 +53,16 @@ if av_mm != int(av_mm):
 # some tinkering shows that averaging the argminimizers doesn't work.
 # But it's a continuous process, so I should be able to 
 # brute force check values between mean and median.
-candidates = np.arange(median_location,mean_location+1, dtype=int)
+candidates = np.arange(median_location,mean_location+2, dtype=int)
 vals = np.array([cost(positions, c) for c in candidates])
 
 for c,v in zip(candidates, vals):
     print("%10i | %10i"%(c,v))
+    
+idx = np.argmin(vals)
+print("Position %i has minimum fuel of %i"%(candidates[idx], vals[idx]))
+
+# seems too close to the mean; theoretically should be distinct 
+# from mean for arbitrary data? since cost function should be 
+# purely the quadratic for the mean? 
 
