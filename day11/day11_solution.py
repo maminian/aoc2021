@@ -45,7 +45,7 @@ def neighbors(ij, dims=octo.shape):
 
 ######
 
-maxsteps = 100
+maxsteps = 240
 step=0
 firings = 0
 
@@ -54,9 +54,6 @@ states = []
 
 while True:
     octo += 1
-    
-    step_idxs.append( step )
-    states.append( np.array(octo) )
     
     active = (octo > 9)
     flashed = np.zeros(active.shape, dtype=bool)  # copy
@@ -82,6 +79,8 @@ while True:
     step += 1
     if np.all(flashed):
         print("dong ding part 2 step %i"%(step))
+#        break
+    if step>=maxsteps:
         break
     
     
