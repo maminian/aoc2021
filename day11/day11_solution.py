@@ -49,28 +49,41 @@ maxsteps = 100
 step=0
 firings = 0
 
-#for i in range(maxsteps):
+step_idxs = []
+states = []
+
 while True:
-    print(octo)
     octo += 1
+    
+    step_idxs.append( step )
+    states.append( np.array(octo) )
+    
     active = (octo > 9)
     flashed = np.zeros(active.shape, dtype=bool)  # copy
 
     while np.any(active):
         for coord in zip(*np.where(active)):
             flashed[coord] = True
-            octo[coord] = 0
             for nn in neighbors(coord):
-                if not flashed[nn]:
-                    octo[nn] += 1
+                octo[nn] += 1
         active = np.logical_and( (octo > 9), np.logical_not(flashed) )
-
+        
+        step_idxs.append( int(step) )
+        states.append( np.array(octo) )
+    #
+    
+    # reset all octos that flashed.
+    octo[flashed] = 0
     firings += np.sum(flashed)
+
+    step_idxs.append( int(step) )
+    states.append( np.array(octo) )
 
     step += 1
     if np.all(flashed):
         print("dong ding part 2 step %i"%(step))
         break
-
+    
+    
 print("Part 1: %i total flashes."%firings)
 
